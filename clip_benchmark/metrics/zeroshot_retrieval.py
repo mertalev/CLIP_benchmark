@@ -1,8 +1,4 @@
-import logging
-from contextlib import suppress
-
 import torch
-import torch.nn.functional as F
 from tqdm import tqdm
 
 def evaluate(model, dataloader, tokenizer,  device, amp=True, recall_k_list=[5]):
@@ -40,18 +36,15 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True, recall_k_list=[5])
     # for each text, we collect the corresponding image index, as each image can have multiple corresponding texts
     texts_image_index = []
     dataloader = dataloader_with_indices(dataloader)
-    autocast = torch.cuda.amp.autocast if amp else suppress
     for batch_images, batch_texts, inds in tqdm(dataloader):
-        batch_images = batch_images.to(device)
         # tokenize all texts in the batch
-        batch_texts_tok = tokenizer([text for i, texts in enumerate(batch_texts) for text in texts]).to(device)
+        batch_texts_tok = tokenizer([text for texts in batch_texts for text in texts])
         # store the index of image for each text
-        batch_texts_image_index = [ind for ind, texts in zip(inds, batch_texts) for text in texts]
+        batch_texts_image_index = [ind for ind, texts in zip(inds, batch_texts) for _ in texts]
 
         # compute the embedding of images and texts
-        with torch.no_grad(), autocast():
-            batch_images_emb = F.normalize(model.encode_image(batch_images), dim=-1)
-            batch_texts_emb = F.normalize(model.encode_text(batch_texts_tok), dim=-1)
+        batch_images_emb = model.encode_image(batch_images)
+        batch_texts_emb = model.encode_text(batch_texts_tok)
 
         batch_images_emb_list.append(batch_images_emb.cpu())
         batch_texts_emb_list.append(batch_texts_emb.cpu())
@@ -68,7 +61,8 @@ def evaluate(model, dataloader, tokenizer,  device, amp=True, recall_k_list=[5])
 
     # construct a the positive pair matrix, which tells whether each text-image pair is a positive or not
     positive_pairs = torch.zeros_like(scores, dtype=bool)
-    positive_pairs[torch.arange(len(scores)), texts_image_index] = True
+    arange = torch.arange(len(scores))
+    positive_pairs[arange, arange] = True
     metrics = {}
     for recall_k in recall_k_list:
         # Note that recall_at_k computes **actual** recall i.e. nb_true_positive/nb_positives, where the number
