@@ -1,0 +1,1 @@
+{"dataset": "multilingual_mscoco_captions", "model": "XLM-Roberta-Large-Vit-B-32", "pretrained": "", "task": "zeroshot_retrieval", "metrics": {"image_retrieval_recall@1": 0.5360000133514404, "text_retrieval_recall@1": 0.5759999752044678}, "language": "en"}

@@ -1,0 +1,1 @@
+{"dataset": "crossmodal3600", "model": "XLM-Roberta-Large-Vit-L-14", "pretrained": "", "task": "zeroshot_retrieval", "metrics": {"image_retrieval_recall@5": 0.009722222574055195, "text_retrieval_recall@5": 0.012222222052514553}, "language": "mi"}

@@ -1,0 +1,1 @@
+{"dataset": "crossmodal3600", "model": "LABSE-Vit-L-14", "pretrained": "", "task": "zeroshot_retrieval", "metrics": {"image_retrieval_recall@5": 0.570555567741394, "text_retrieval_recall@5": 0.6411111354827881}, "language": "th"}

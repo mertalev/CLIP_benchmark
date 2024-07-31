@@ -1,0 +1,1 @@
+{"dataset": "multilingual_mscoco_captions", "model": "LABSE-Vit-L-14", "pretrained": "", "task": "zeroshot_retrieval", "metrics": {"image_retrieval_recall@10": 0.8939999938011169, "text_retrieval_recall@10": 0.9190000295639038}, "language": "de"}
